@@ -1,0 +1,181 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Use mvn -Drat.ignoreErrors=true -Dcheckstyle.skip -Dmaven.test.skip=true package install -->
+
+    <parent>
+        <groupId>org.tomitribe</groupId>
+        <artifactId>tomitribe-crest-parent</artifactId>
+        <version>0.8</version>
+    </parent>
+
+    <properties>
+        <project.version>0.1</project.version>
+        <tomitribe.version>0.8</tomitribe.version>
+    </properties>
+
+    <groupId>br.cefet-rj.eic</groupId>
+    <artifactId>poc-quill-wff</artifactId>
+    <version>${project.version}</version>
+    <name>poc-quill-wff</name>
+
+    <description>
+        A poc-quill-wff Application.
+    </description>
+
+    <dependencies>
+        <!-- Utilities -->
+        <!-- dependency>
+            <groupId>net.jafama</groupId>
+            <artifactId>jafama</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>18.0</version>
+        </dependency -->
+
+        <!-- Logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.12</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.12</version>
+        </dependency>
+
+        <!-- CSV library -->
+        <dependency>
+            <groupId>net.sf.supercsv</groupId>
+            <artifactId>super-csv</artifactId>
+            <version>2.3.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.tomitribe</groupId>
+            <artifactId>tomitribe-crest</artifactId>
+            <version>${tomitribe.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.tomitribe</groupId>
+            <artifactId>tomitribe-crest-api</artifactId>
+            <version>${tomitribe.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.tomitribe</groupId>
+            <artifactId>tomitribe-crest-xbean</artifactId>
+            <version>${tomitribe.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.tomitribe</groupId>
+            <artifactId>tomitribe-crest-cli</artifactId>
+            <version>${tomitribe.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.bval</groupId>
+            <artifactId>bval-jsr</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-validation_1.1_spec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.getquill</groupId>
+            <artifactId>quill-spark_2.11</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <defaultGoal>install</defaultGoal>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <compilerVersion>1.8</compilerVersion>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>org.tomitribe.crest.Main</mainClass>
+                                </transformer>
+                            </transformers>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/LICENSE.txt</exclude>
+                                        <exclude>META-INF/NOTICE.txt</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- now make the jar chmod +x style executable -->
+            <plugin>
+                <groupId>org.skife.maven</groupId>
+                <artifactId>really-executable-jar-maven-plugin</artifactId>
+                <version>1.1.0</version>
+                <configuration>
+                    <!-- value of flags will be interpolated into the java invocation -->
+                    <!-- as "java $flags -jar ..." -->
+                    <flags>-Xmx1G</flags>
+                    <programFile>${project.artifactId}</programFile>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>really-executable-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <distributionManagement>
+        <repository>
+            <id>localhost</id>
+            <url>file://${basedir}/target/repo/</url>
+        </repository>
+        <snapshotRepository>
+            <id>localhost</id>
+            <url>file://${basedir}/target/snapshot-repo/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+</project>
